@@ -1,23 +1,35 @@
 import requests
-import json
+import pandas as pd
 
-# 1. 내 정보 설정
-# 마이페이지에서 발급받은 본인의 API 인증키를 붙여넣으세요.
-my_api_key = "여기에_발급받은_인증키를_붙여넣으세요" 
+# 1. API 인증키와 요청 주소 설정
+# KEPCO 빅데이터 플랫폼 '마이페이지'에서 발급받은 본인의 인증키를 붙여넣으세요!
+MY_API_KEY ="f0i85SeTfHVIblg2C4HhKSNI9094P41km40l2W7z"
 
-# 2. 요청할 주소(URL) 만들기
-# API 문서(메뉴판)를 보고 어떤 정보를 요청할지 정합니다.
-# 여기서는 2023년(year=2023), 서울특별시(metroCd=11), 태양광(genSrcCd=1) 정보를 요청합니다.
-url = f"https://bigdata.kepco.co.kr/openapi/v1/renewEnergy.do?year=2023&metroCd=11&genSrcCd=1&apiKey={my_api_key}&returnType=json"
+# 요청하고 싶은 데이터의 조건을 URL 파라미터로 설정합니다.
+# year: 2023년, metroCd: 11(서울), genSrcCd: 1(태양광)
+url = f'https://bigdata.kepco.co.kr/openapi/v1/renewEnergy.do?year=2019&metroCd=11&genSrcCd=1&apiKey={MY_API_KEY}=xxx&returnType=json'
 
-# 3. API 호출 (식당에 주문하기)
-# requests.get() 함수를 이용해 위에서 만든 주소로 데이터를 요청합니다.
+
+# 2. API 호출하여 데이터 요청하기 🚀
+print("KEPCO 서버에 데이터를 요청합니다...")
 response = requests.get(url)
 
-# 4. 응답 데이터 확인 (주문한 음식 받기)
-# 서버가 보내준 응답(response)을 컴퓨터가 다루기 쉬운 JSON 형태로 변환합니다.
-data = response.json()
 
-# 5. 결과 출력
-# 보기 좋게 정리해서 화면에 출력합니다.
-print(json.dumps(data, indent=2, ensure_ascii=False))
+# 3. 응답 결과 확인 및 표로 변환하기 📊
+# 서버가 응답을 성공적으로 보냈는지 확인 (상태 코드 200 = 성공)
+if response.status_code == 200:
+    print("데이터를 성공적으로 받아왔습니다!")
+    
+    # JSON 형식의 데이터를 파이썬 딕셔너리로 변환
+    data = response.json()
+    
+    # 실제 데이터 부분('data' 키 값)을 판다스 DataFrame(표)으로 변환
+    df = pd.DataFrame(data['data'])
+    
+    # 결과 출력
+    print("\n[서울시 태양광 설비 정보]")
+    print(df)
+
+else:
+    print(f"오류가 발생했습니다. (오류 코드: {response.status_code})")
+    print("API 인증키가 정확한지, 요청 주소에 오타가 없는지 확인해 보세요.")
