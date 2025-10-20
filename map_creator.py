@@ -5,8 +5,8 @@ import folium # 지도 생성 도구
 # --- 1. 데이터 불러오기 ---
 
 # (A) 지도 모양 데이터 불러오기
-# './위치정보/' 폴더에 있는 지도 파일을 읽어오기 ( 각 구의 이름과 경계선 좌표 정보)
-seoul_gu_geo = gpd.read_file('./위치정보/seoul_municipalities_geo_simple.json')
+# 지도 파일을 읽어오기 ( 각 구의 이름과 경계선 좌표 정보)
+seoul_gu_geo = gpd.read_file('gadm41_KOR_1.json')
 
 # (B) 내가 사용할 데이터 불러오기
 # './위치정보/' 폴더에 있는 CSV 파일을 읽어옵니다.
