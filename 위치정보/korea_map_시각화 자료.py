@@ -1,6 +1,7 @@
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+
 # 한글 폰트가 깨질 경우를 위한 설정 (우선 주석 처리)
 # import platform
 # if platform.system() == 'Windows':
@@ -25,23 +26,23 @@ print("\n--- 2. 시각화할 분석 데이터 준비 중... ---")
 # (이름, 값) 튜플의 리스트로 '표'처럼 만듭니다.
 # '이름'은 korea_map의 'NAME_1' 컬럼 값과 정확히 일치해야 합니다.
 data_rows = [
-    ('Busan', 3200),
-    ('Chungcheongbuk-do', 7100),
-    ('Chungcheongnam-do', 8200),
-    ('Daegu', 4100),
-    ('Daejeon', 3900),
-    ('Gangwon-do', 10500),
-    ('Gwangju', 2900),
-    ('Gyeonggi-do', 11200),
-    ('Gyeongsangbuk-do', 10800),
-    ('Gyeongsangnam-do', 9500),
-    ('Incheon', 4500),
-    ('Jeju', 5300),
-    ('Jeollabuk-do', 9100),
-    ('Jeollanam-do', 12500),
-    ('Sejong', 1800),
-    ('Seoul', 4800),
-    ('Ulsan', 3700)
+    ('부산', 3200),
+    ('경상북도', 7100),
+    ('경상남도', 8200),
+    ('대구', 4100),
+    ('대전', 3900),
+    ('강원도', 10500),
+    ('경주', 2900),
+    ('경기도', 11200),
+    ('경상북도', 10800),
+    ('경상남도', 9500),
+    ('인천', 4500),
+    ('제주', 5300),
+    ('전라북도', 9100),
+    ('전라남도', 12500),
+    ('세종', 1800),
+    ('서울', 4800),
+    ('울산', 3700)
 ]
 
 # DataFrame으로 변환
