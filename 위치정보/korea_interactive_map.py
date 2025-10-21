@@ -11,12 +11,23 @@ print(" - 전국 지도(GeoJSON) 불러오기 성공")
 
 # (B) 17개 시도별 가상 분석 데이터 (이전과 동일)
 data_rows = [
-    ('Busan', 3200), ('Chungcheongbuk-do', 7100), ('Chungcheongnam-do', 8200),
-    ('Daegu', 4100), ('Daejeon', 3900), ('Gangwon-do', 10500),
-    ('Gwangju', 2900), ('Gyeonggi-do', 11200), ('Gyeongsangbuk-do', 10800),
-    ('Gyeongsangnam-do', 9500), ('Incheon', 4500), ('Jeju', 5300),
-    ('Jeollabuk-do', 9100), ('Jeollanam-do', 12500), ('Sejong', 1800),
-    ('Seoul', 4800), ('Ulsan', 3700)
+    ('부산', 3200),
+    ('경상북도', 7100),
+    ('경상남도', 8200),
+    ('대구', 4100),
+    ('대전', 3900),
+    ('강원도', 10500),
+    ('경주', 2900),
+    ('경기도', 11200),
+    ('경상북도', 10800),
+    ('경상남도', 9500),
+    ('인천', 4500),
+    ('제주', 5300),
+    ('전라북도', 9100),
+    ('전라남도', 12500),
+    ('세종', 1800),
+    ('서울', 4800),
+    ('울산', 3700)
 ]
 analysis_data = pd.DataFrame(data_rows, columns=['Region_Name', 'Solar_Production'])
 print(" - 17개 시도별 가상 데이터 준비 완료")
@@ -66,13 +77,10 @@ folium.GeoJson(
     )
 ).add_to(m)
 
-print(" - 지도 시각화 요소 추가 완료")
-
-
 print("\n--- 4. 파일로 저장하기 ---")
 
 # 'korea_interactive_map.html' 파일이 생성됩니다.
 output_file = 'korea_interactive_map.html'
 m.save(output_file)
 
-print(f"지도 생성이 완료되었습니다! {output_file} 파일을 열어보세요. ✨")
+print(f"지도 생성이 완료되었습니다! {output_file} 파일을 열어보세요.")
