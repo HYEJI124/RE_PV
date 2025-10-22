@@ -6,7 +6,7 @@ def get_kma_data(stn_id):
     """
 
 # API URL 
-    url = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php?tm1=20200101&tm2=20241231&stn=108&authKey=vLfGjQIPTia3xo0CD94muA'
+    url = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php?tm1=20200101&tm2=20241231&authKey=vLfGjQIPTia3xo0CD94muA'
 
     try:
         # pd.read_csv로 URL에서 바로 데이터를 읽어오기.
