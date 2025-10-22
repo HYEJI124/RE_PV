@@ -1,51 +1,75 @@
-# 파일 이름: main_analysis.py
-
 import pandas as pd
 import numpy as np
 import kma_api  # kma_api.py 파일을 불러옵니다.
 
-# --- 1. 데이터 로딩 ()---
-weather_df = kma_api.get_kma_data('108') # 서울 '108' 지점
 
-if weather_df is None:
-    print("기상 데이터를 불러오는 데 실패했습니다.")
+# --- 1. 17개 시도 지점 코드 정의 ---
+
+''' 서울(108), 부산(159), 대구(143), 인천(112), 광주(156), 대전(133), 울산(152)
+세종(239), 수원(119-경기도), 춘천(101-강원), 청주(131-충북), 홍성(177-충남),
+전주(146-전북), 목포(165-전남), 안동(136-경북), 창원(155-경남), 제주(184)
+'''
+
+station_ids = [
+    '108', '159', '143', '112', '156', '133', '152', '239', '119',
+    '101', '131', '177', '146', '165', '136', '155', '184'
+]
+
+
+# --- 2. 17개 지점 데이터 반복 로딩 ---
+all_weather_dfs = [] # 빈 리스트 준비
+for stn_id in station_ids:
+    print(f"지점 {stn_id} 데이터 로딩 중...")
+    df = kma_api.get_kma_data(stn_id)
+    if df is not None:
+        all_weather_dfs.append(df)
+
+if not all_weather_dfs:
+    print("오류: 로드된 데이터가 없습니다.")
 else:
-    print("기상 데이터 로딩 성공.")
+    # --- 3. 17개 데이터를 하나로 합치기 (Concat) ---
+    print("\n3. 모든 지점 데이터를 하나로 합칩니다...")
+    weather_df = pd.concat(all_weather_dfs)
+    
+    # --- 4. 데이터 정제 (Refinement) ---
+    print("4. 전체 데이터 정제를 시작합니다...")
 
-    # --- 2. 데이터 정제 (Refinement) ---
     # [정제 1] 날짜 형식 통일
     weather_df['날짜'] = pd.to_datetime(weather_df['날짜'], format='%Y%m%d')
-
-    # [정제 2] 결측치(-9.0) 처리 (필수!)
+    # [정제 2] 결측치(-9.0) 처리
     weather_df = weather_df.replace([-9.0, -99.0, -99.9], np.nan)
-    
     # [정제 3] '날짜'를 인덱스로 설정
-    # (resample 기능은 인덱스가 날짜/시간 타입일 때만 작동합니다)
     weather_df = weather_df.set_index('날짜')
-
-    # --- 3. 월별 데이터로 집계 (Resample) ---
-    print("\n 월별 데이터로 집계")
     
-    # 집계 규칙
-    # - 일조시간, 일사합: 월간 총합계 (sum)
-    # - 평균기온: 월간 평균 (mean)
-    # - 지점: 그냥 첫 번째 값 사용 (first)
+    print("일별 데이터 정제 완료.")
+
+    # --- 5. ✨ 지점별 + 월별 데이터로 집계 (Groupby + Resample) ---
+    print("\n5. 지점별 & 월별 데이터로 집계합니다...")
+    
     agg_rules = {
         '일조시간': 'sum',
-        '지점': 'first' 
+        # '지점' 컬럼은 이제 groupby의 기준이므로 rules에서 빠져도 됩니다.
     }
+
+    # (중요!) groupby('지점')으로 지점별로 그룹을 나눈 뒤,
+    # 각 그룹별로 resample('M')을 적용합니다.
+    monthly_df = weather_df.groupby('지점').resample('M').agg(agg_rules)
     
-    # 'M': Month-End (월말 기준)
-    monthly_df = weather_df.resample('M').agg(agg_rules)
-    monthly_df.index = monthly_df.index.to_period('M')
+    # 인덱스 형식을 '2020-01'로 변경
+    # (groupby를 쓰면 인덱스가 (지점, 날짜) 2중으로 잡힙니다)
+    monthly_df = monthly_df.reset_index() # 2중 인덱스 풀기
+    monthly_df['날짜'] = monthly_df['날짜'].dt.to_period('M')
+    monthly_df = monthly_df.set_index(['지점', '날짜']) # 다시 (지점, 날짜)로 인덱스
+    
 
-    # --- 4. 최종 월별 데이터 확인 ---
-    print("\n--- 최종 집계된 월별 데이터 (상위 12개) ---")
-    print(monthly_df.head(12))
+    # --- 6. 최종 월별 데이터 확인 ---
+    print("\n--- 최종 집계된 월별 데이터 (일부) ---")
+    print(monthly_df.head(10)) # 108(서울) 데이터
+    print("...")
+    print(monthly_df.tail(10)) # 184(제주) 데이터
 
-    print("\n--- 월별 데이터 요약 정보 ---")
-    monthly_df.info()
 
-    # (참고) 나중에 이 월별 데이터를 CSV로 저장해두고 싶으면
-    # monthly_df.to_csv('monthly_kma_data_108.csv')
-    # print("\n월별 데이터를 'monthly_kma_data_108.csv' 파일로 저장했습니다.")
+
+
+
+
