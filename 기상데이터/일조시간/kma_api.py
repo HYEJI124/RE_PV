@@ -6,9 +6,15 @@ def get_kma_data(stn_id):
     """
 
 # API URL 
-    url = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php?tm1=20200101&tm2=20241231&authKey=vLfGjQIPTia3xo0CD94muA'
+    base_url = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfcdd3.php'
+    tm1 = '20200101'
+    tm2 = '20241231'
+    authKey = 'vLfGjQIPTia3xo0CD94muA'
 
+    # ✅ 지점 코드(stn) 포함
+    url = f"{base_url}?stn={stn_id}&tm1={tm1}&tm2={tm2}&authKey={authKey}"
     try:
+
         # pd.read_csv로 URL에서 바로 데이터를 읽어오기.
         df = pd.read_csv(
             url,
@@ -30,13 +36,3 @@ def get_kma_data(stn_id):
     
     except Exception as e:
         print(f"데이터를 읽어오는 중 오류가 발생했습니다: {e}")
-
-# --- 테스트용 코드 ---
-if __name__ == "__main__":
-    print("kma_api.py 모듈 테스트 시작...")
-    
-    # 서울(108) 지점 테스트
-    df_seoul = get_kma_data('108')
-    
-    if df_seoul is not None:
-        print(df_seoul.head())
