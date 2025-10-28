@@ -26,7 +26,10 @@ def get_kma_data(stn_id):
         column_map = {
             0: '날짜',
             1: '지점', 
-            32: '일조시간'
+            2: '풍속',
+            10: '기온',
+            32: '일조시간',
+            35: '일사량'
         }
         
         df_selected = df[column_map.keys()].rename(columns=column_map)
