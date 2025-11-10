@@ -16,32 +16,32 @@ output_csv = "/Users/parkhyeji/Desktop/RE_PV/data/중부+동서/동서+중부_�
 # CSV 읽기
 df = pd.read_csv(file_path, encoding='utf-8-sig')
 
-# 🔹 결측 처리
+# 결측 처리
 df['일강수량(mm)'] = df['일강수량(mm)'].fillna(0)
 df = df.dropna(subset=['합계 일사량(MJ/m2)'])
 
-# 🔹 독립변수(X), 종속변수(y)
+# 독립변수(X), 종속변수(y)
 X = df[['설비용량(MW)', '평균기온(°C)', '일강수량(mm)',
         '평균 풍속(m/s)', '평균 상대습도(%)',
         '합계 일조시간(hr)', '합계 일사량(MJ/m2)']]
 y = df['발전량(MWh)']
 
-# 🔹 학습 / 테스트 분리
+# 학습 / 테스트 분리
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 🔹 모델 학습
+# 모델 학습
 model = RandomForestRegressor(n_estimators=500, random_state=42, n_jobs=-1)
 model.fit(X_train, y_train)
 
-# 🔹 예측 및 평가
+# 예측 및 평가
 y_pred = model.predict(X_test)
 r2 = r2_score(y_test, y_pred)
 rmse = mean_squared_error(y_test, y_pred) ** 0.5
 
-print(f"✅ 통합 모델 R²: {r2:.4f}")
-print(f"✅ 통합 모델 RMSE: {rmse:.4f}")
+print(f" 통합 모델 R²: {r2:.4f}")
+print(f" 통합 모델 RMSE: {rmse:.4f}")
 
-# 🔹 결과 저장
+# 결과 저장
 results_df = pd.DataFrame({
     "모델": ["통합 랜덤포레스트"],
     "결정계수(R²)": [round(r2, 4)],
@@ -49,9 +49,9 @@ results_df = pd.DataFrame({
     "데이터 수": [len(X)]
 })
 results_df.to_csv(output_csv, index=False, encoding='utf-8-sig')
-print(f"📁 결과 저장 완료: {output_csv}")
+print(f"결과 저장 완료: {output_csv}")
 
-# 🔹 중요 변수 시각화
+# 중요 변수 시각화
 importances = pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)
 plt.figure(figsize=(8, 5))
 importances.plot(kind='barh', color='skyblue')
@@ -62,7 +62,7 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 
-# 🔹 실제값 vs 예측값 산점도
+# 실제값 vs 예측값 산점도
 plt.figure(figsize=(6, 6))
 plt.scatter(y_test, y_pred, alpha=0.5, color='royalblue')
 plt.plot([y_test.min(), y_test.max()],
