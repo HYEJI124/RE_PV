@@ -5,11 +5,11 @@ from sklearn.metrics import r2_score, mean_squared_error
 import matplotlib.pyplot as plt
 import os
 
-# ✅ macOS 한글 폰트 설정
+# macOS 한글 폰트 설정
 plt.rcParams['font.family'] = 'AppleGothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-# 🔹 파일 경로 설정
+# 파일 경로 설정
 file_path = "/Users/parkhyeji/Desktop/RE_PV/데이터/이상치제거_후/중부+동서.csv"
 save_dir = "/Users/parkhyeji/Desktop/RE_PV/RF/data/통합RF/중부+동서변수누적중요도"
 os.makedirs(save_dir, exist_ok=True)
@@ -18,27 +18,27 @@ importance_csv = os.path.join(save_dir, "중부+동서_변수중요도_통합RF.
 importance_img = os.path.join(save_dir, "중부+동서_변수중요도_통합RF.png")
 cumulative_img = os.path.join(save_dir, "중부+동서_변수누적중요도_통합RF.png")
 
-# 🔹 CSV 읽기
+# CSV 읽기
 df = pd.read_csv(file_path, encoding='utf-8-sig')
 
-# 🔹 결측 처리
+# 결측 처리
 df['일강수량(mm)'] = df['일강수량(mm)'].fillna(0)
 df = df.dropna(subset=['합계 일사량(MJ/m2)'])
 
-# 🔹 독립변수(X), 종속변수(y)
+# 독립변수(X), 종속변수(y)
 X = df[['설비용량(MW)', '평균기온(°C)', '일강수량(mm)',
         '평균 풍속(m/s)', '평균 상대습도(%)',
         '합계 일조시간(hr)', '합계 일사량(MJ/m2)']]
 y = df['발전량(MWh)']
 
-# 🔹 학습 / 테스트 분리
+# 학습 / 테스트 분리
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 🔹 모델 학습
+# 모델 학습
 model = RandomForestRegressor(n_estimators=500, random_state=42, n_jobs=-1)
 model.fit(X_train, y_train)
 
-# 🔹 예측 및 평가
+# 예측 및 평가
 y_pred = model.predict(X_test)
 r2 = r2_score(y_test, y_pred)
 rmse = mean_squared_error(y_test, y_pred) ** 0.5
@@ -47,7 +47,7 @@ print(f"✅ 통합 모델 R²: {r2:.4f}")
 print(f"✅ 통합 모델 RMSE: {rmse:.4f}")
 
 # ==========================================================
-# 1️⃣ 결과 저장
+# 1. 결과 저장
 # ==========================================================
 results_df = pd.DataFrame({
     "모델": ["통합 랜덤포레스트"],
@@ -59,12 +59,12 @@ results_df.to_csv(output_csv, index=False, encoding='utf-8-sig')
 print(f"📁 모델 성능 결과 저장 완료: {output_csv}")
 
 # ==========================================================
-# 2️⃣ 변수 중요도 계산 및 시각화
+# 2. 변수 중요도 계산 및 시각화
 # ==========================================================
 importances = pd.Series(model.feature_importances_, index=X.columns)
 importances = importances.sort_values(ascending=True)
 
-# 🔹 중요도 DataFrame 저장
+# 중요도 DataFrame 저장
 importance_df = pd.DataFrame({
     "변수명": importances.index,
     "중요도": importances.values
@@ -72,7 +72,7 @@ importance_df = pd.DataFrame({
 importance_df.to_csv(importance_csv, index=False, encoding='utf-8-sig')
 print(f"📊 변수 중요도 저장 완료: {importance_csv}")
 
-# 🔹 중요도 막대그래프
+# 중요도 막대그래프
 plt.figure(figsize=(8, 5))
 bars = plt.barh(importances.index, importances.values, color='skyblue')
 plt.title("변수별 중요도 (Random Forest)")
@@ -92,7 +92,7 @@ plt.show()
 print(f"🖼️ 변수 중요도 그래프 저장 완료: {importance_img}")
 
 # ==========================================================
-# 3️⃣ 변수 누적 중요도 (Top-N 기준)
+# 3. 변수 누적 중요도 (Top-N 기준)
 # ==========================================================
 importance_df['누적중요도(%)'] = importance_df['중요도'].cumsum() / importance_df['중요도'].sum() * 100
 
@@ -120,7 +120,7 @@ plt.show()
 print(f"🖼️ 변수 누적 중요도 그래프 저장 완료: {cumulative_img}")
 
 # ==========================================================
-# 4️⃣ 실제값 vs 예측값 산점도
+# 4. 실제값 vs 예측값 산점도
 # ==========================================================
 plt.figure(figsize=(6, 6))
 plt.scatter(y_test, y_pred, alpha=0.5, color='royalblue')

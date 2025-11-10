@@ -5,15 +5,15 @@ from sklearn.metrics import r2_score, mean_squared_error
 import matplotlib.pyplot as plt
 import os
 
-# ✅ macOS 한글 폰트 설정 (그래프 깨짐 방지)
+# macOS 한글 폰트 설정 (그래프 깨짐 방지)
 plt.rcParams['font.family'] = 'AppleGothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-# 🔹 파일 경로
+# 파일 경로
 file_path = "/Users/parkhyeji/Desktop/RE_PV/data/중부+동서/동서+중부_일사량예측(LR).csv"
 output_csv = "/Users/parkhyeji/Desktop/RE_PV/data/중부+동서/동서+중부_통합학습결과_일사량LR.csv"
 
-# 🔹 CSV 읽기
+# CSV 읽기
 df = pd.read_csv(file_path, encoding='utf-8-sig')
 
 # 🔹 결측 처리
