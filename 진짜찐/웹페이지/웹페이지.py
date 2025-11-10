@@ -1,3 +1,4 @@
+# 실행 명령어(?) streamlit run yourscript.py
 import streamlit as st
 import pandas as pd
 import folium
